@@ -22,43 +22,24 @@ jobs:
       - name: Set up Flutter (stable)
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
-          flutter-version: '3.19.6'   # istersen boş bırak, en güncel stable gelir
-
-      # pub ve gradle cache (buildleri hızlandırır)
-      - name: Cache Flutter pub
-        uses: actions/cache@v4
-        with:
-          path: ~/.pub-cache
-          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
-          restore-keys: ${{ runner.os }}-pub-
-
-      - name: Cache Gradle
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: ${{ runner.os }}-gradle-
-
-      # android/ yoksa ekler (lib/main.dart vb. dosyalarına dokunmaz)
-      - name: Ensure Android folder exists
-        run: flutter create . --platforms=android
+          channel: stable
+          cache: true
 
       - name: Flutter pub get
         run: flutter pub get
 
-      # İsteğe bağlı: versiyon/isim kontrolü
-      - name: Flutter doctor (summary)
-        run: flutter --version
+      # App ikonlarını pubspec.yaml'daki flutter_icons ayarına göre üretir.
+      # iOS kapalı olduğu için uyarı vermez; yine de hata olursa job devam etsin:
+      - name: Generate launcher icons
+        run: flutter pub run flutter_launcher_icons:main
+        continue-on-error: true
 
-      # Release APK (debug keystore otomatik, shrink kapalı tutmak bazen CI'da 
       - name: Build APK (debug)
-       run: flutter build apk --debug
+        run: flutter build apk --debug
 
       - name: Upload APK artifact
-      uses: actions/upload-artifact@v3
-      with:
-      name: app-debug-apk
-      path: build/app/outputs/flutter-apk/app-debug.apk
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug-apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
+          if-no-files-found: error
