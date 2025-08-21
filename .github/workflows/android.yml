@@ -30,8 +30,8 @@ jobs:
         run: flutter pub get
 
       # (Opsiyonel ama faydalı)
-      - name: Generate launcher icons
-        run: dart run flutter_launcher_icons:main
+      # - name: Generate launcher icons
+#   run: dart run flutter_launcher_icons:main
 
       - name: Build APK (release)
         run: flutter build apk --release
