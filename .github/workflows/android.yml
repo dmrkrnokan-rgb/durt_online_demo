@@ -1,9 +1,9 @@
 name: Android APK Build
 
 on:
-  workflow_dispatch:
   push:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build-android:
@@ -17,25 +17,21 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: "17"
+          java-version: '17'
 
-      - name: Set up Flutter
+      - name: Set up Flutter (stable 3.19.6)
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "stable"
-          channel: "stable"
+          flutter-version: '3.19.6'   # <<--- SÜRÜMÜ SABİTLE
+          channel: 'stable'
           cache: true
-
-      # android/ios klasörleri yoksa oluşturur
-      - name: Flutter create
-        run: flutter create .
 
       - name: Flutter pub get
         run: flutter pub get
 
-      # Uygulama ikonlarını üret (pubspec.yaml'daki brand/app_icon_1024.png)
+      # (Opsiyonel ama faydalı)
       - name: Generate launcher icons
-        run: flutter pub run flutter_launcher_icons:main
+        run: dart run flutter_launcher_icons:main
 
       - name: Build APK (release)
         run: flutter build apk --release
@@ -43,5 +39,5 @@ jobs:
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: app-release
+          name: durt-online-demo-apk
           path: build/app/outputs/flutter-apk/app-release.apk
