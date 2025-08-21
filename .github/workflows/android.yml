@@ -53,12 +53,12 @@ jobs:
       - name: Flutter doctor (summary)
         run: flutter --version
 
-      # Release APK (debug keystore otomatik, shrink kapalı tutmak bazen CI'da stabildir)
-      - name: Build APK (release)
-        run: flutter build apk --release --no-shrink
+      # Release APK (debug keystore otomatik, shrink kapalı tutmak bazen CI'da 
+      - name: Build APK (debug)
+  run: flutter build apk --debug
 
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-release-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+- name: Upload APK artifact
+  uses: actions/upload-artifact@v3
+  with:
+    name: app-debug-apk
+    path: build/app/outputs/flutter-apk/app-debug.apk
