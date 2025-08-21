@@ -55,10 +55,10 @@ jobs:
 
       # Release APK (debug keystore otomatik, shrink kapalı tutmak bazen CI'da 
       - name: Build APK (debug)
-  run: flutter build apk --debug
+       run: flutter build apk --debug
 
-- name: Upload APK artifact
-  uses: actions/upload-artifact@v3
-  with:
-    name: app-debug-apk
-    path: build/app/outputs/flutter-apk/app-debug.apk
+      - name: Upload APK artifact
+      uses: actions/upload-artifact@v3
+      with:
+      name: app-debug-apk
+      path: build/app/outputs/flutter-apk/app-debug.apk
