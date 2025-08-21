@@ -19,25 +19,46 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Set up Flutter (stable 3.19.6)
+      - name: Set up Flutter (stable)
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.6'   # <<--- SÜRÜMÜ SABİTLE
           channel: 'stable'
-          cache: true
+          flutter-version: '3.19.6'   # istersen boş bırak, en güncel stable gelir
+
+      # pub ve gradle cache (buildleri hızlandırır)
+      - name: Cache Flutter pub
+        uses: actions/cache@v4
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: ${{ runner.os }}-pub-
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: ${{ runner.os }}-gradle-
+
+      # android/ yoksa ekler (lib/main.dart vb. dosyalarına dokunmaz)
+      - name: Ensure Android folder exists
+        run: flutter create . --platforms=android
 
       - name: Flutter pub get
         run: flutter pub get
 
-      # (Opsiyonel ama faydalı)
-      # - name: Generate launcher icons
-#   run: dart run flutter_launcher_icons:main
+      # İsteğe bağlı: versiyon/isim kontrolü
+      - name: Flutter doctor (summary)
+        run: flutter --version
 
+      # Release APK (debug keystore otomatik, shrink kapalı tutmak bazen CI'da stabildir)
       - name: Build APK (release)
-        run: flutter build apk --release
+        run: flutter build apk --release --no-shrink
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: durt-online-demo-apk
+          name: app-release-apk
           path: build/app/outputs/flutter-apk/app-release.apk
