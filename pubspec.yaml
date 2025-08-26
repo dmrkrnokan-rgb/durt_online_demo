@@ -26,3 +26,16 @@ flutter_icons:
   android: true
   ios: false              # <<< iOS kapalı
   image_path: "brand/app_icon_1024.png"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_svg: ^2.0.9   # SVG’leri göstermek için
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/cards/
+    - assets/backs/
+    - assets/ui/
+    - assets/tables/
