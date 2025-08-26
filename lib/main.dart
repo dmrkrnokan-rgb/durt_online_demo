@@ -1,13 +1,12 @@
 import 'dart:async';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-void main() => runApp(const DurtApp());
+void main() => runApp(const MyApp());
 
-class DurtApp extends StatelessWidget {
-  const DurtApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -15,7 +14,10 @@ class DurtApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         scaffoldBackgroundColor: const Color(0xFF0E1A2A),
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFD4AF37), brightness: Brightness.dark),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFFD4AF37),
+          brightness: Brightness.dark,
+        ),
         useMaterial3: true,
       ),
       home: const TableScreen(),
@@ -94,7 +96,7 @@ class _TableScreenState extends State<TableScreen> with TickerProviderStateMixin
     // dağıt
     for (final h in hands) { h.clear(); }
     for (int i=0;i<52;i++){ hands[i%4].add(deck[i]); }
-    // ilk top rastgele kendi elinden olsun (kural gereği ilk atış)
+    // ilk top rastgele kendi elinden olsun
     topCard = hands[0].removeLast();
     turn = 1; // ilk hamle üst oyuncuya verelim
     durtPenalty.setAll(0, [0,0,0,0]);
@@ -118,7 +120,6 @@ class _TableScreenState extends State<TableScreen> with TickerProviderStateMixin
   }
 
   bool _handEnded(){
-    // biri biterse el biter
     for (int i=0;i<4;i++){ if (hands[i].isEmpty) return true; }
     return false;
   }
@@ -239,8 +240,8 @@ class _TableScreenState extends State<TableScreen> with TickerProviderStateMixin
   }
 
   List<int> _calcScores(){
-    // Bitiren: -100, diğerleri: elde kalan kart toplamı + DÜRT
-    final finisher = List.generate(4, (i)=> hands[i].isEmpty ? i : -1).firstWhere((x)=>x!=-1, orElse: ()=> -1);
+    final finisher = List.generate(4, (i)=> hands[i].isEmpty ? i : -1)
+        .firstWhere((x)=>x!=-1, orElse: ()=> -1);
     final scores = <int>[0,0,0,0];
     if (finisher != -1) scores[finisher] = -100;
     for (int i=0;i<4;i++){
@@ -333,7 +334,8 @@ class _TableScreenState extends State<TableScreen> with TickerProviderStateMixin
               children: [
                 Switch(
                   value: durtMode,
-                  activeColor: const Color(0xFFD4AF37),
+                  activeThumbColor: const Color(0xFFD4AF37),
+                  activeTrackColor: const Color(0x55D4AF37),
                   onChanged: (v){ setState(()=> durtMode = v); },
                 ),
                 const Text('DÜRT modu', style: TextStyle(color: Colors.white)),
@@ -368,14 +370,13 @@ class _OpponentRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _GlowBox(
-      glow: highlight,
       child: SizedBox(
         height: 82,
         child: Wrap(
           alignment: WrapAlignment.center,
           spacing: 6,
           children: List.generate(math.min(13, cards.length), (i){
-            return _BackCardSmall();
+            return const _BackCardSmall();
           }),
         ),
       ),
@@ -390,15 +391,17 @@ class _OpponentColumn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _GlowBox(
-      glow: highlight,
       child: SizedBox(
         width: 86,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(math.min(13, cards.length), (i)=> const Padding(
-            padding: EdgeInsets.symmetric(vertical: 2),
-            child: _BackCardSmall(),
-          )),
+          children: List.generate(
+            math.min(13, cards.length),
+            (i)=> const Padding(
+              padding: EdgeInsets.symmetric(vertical: 2),
+              child: _BackCardSmall(),
+            ),
+          ),
         ),
       ),
     );
@@ -409,7 +412,6 @@ class _BackCardSmall extends StatelessWidget {
   const _BackCardSmall();
   @override
   Widget build(BuildContext context) {
-    // Kart arkasını göster (varsa svg), yoksa placeholder
     return SizedBox(
       width: 48, height: 66,
       child: _safeSvg('assets/backs/Kart_Arka_Kucuk.svg', fit: BoxFit.contain),
@@ -469,9 +471,7 @@ class _TurnGlowOverlay extends StatelessWidget {
   const _TurnGlowOverlay({required this.turn});
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-      painter: _GlowPainter(turn),
-    );
+    return CustomPaint(painter: _GlowPainter(turn));
   }
 }
 
@@ -483,8 +483,6 @@ class _GlowPainter extends CustomPainter {
     final paint = Paint()
       ..color = const Color(0x66FFD36A)
       ..maskFilter = const MaskFilter.blur(BlurStyle.outer, 30);
-
-    // 0: bottom center, 1: top center, 2: center left, 3: center right
     Offset center;
     switch (turn) {
       case 1: center = Offset(size.width/2, 56); break;
@@ -522,12 +520,14 @@ Widget _safeSvg(String path, {BoxFit fit = BoxFit.contain}) {
     fit: fit,
     placeholderBuilder: (_) => Container(
       color: const Color(0x11000000),
-      child: const Center(child: Icon(Icons.image_not_supported, color: Colors.white54)),
+      child: const Center(
+        child: Icon(Icons.image_not_supported, color: Colors.white54),
+      ),
     ),
   );
 }
 
-// basit parlama kutusu (avatar/isim etrafına çerçeve gibi)
+// Basit parlama kutusu
 class _GlowBox extends StatelessWidget {
   final Widget child;
   final Color color;
@@ -537,7 +537,7 @@ class _GlowBox extends StatelessWidget {
   const _GlowBox({
     Key? key,
     required this.child,
-    this.color = const Color(0xFF0E2A47), // lacivert
+    this.color = const Color(0xFF0E2A47),
     this.radius = 12,
     this.padding = const EdgeInsets.all(8),
   }) : super(key: key);
@@ -559,27 +559,6 @@ class _GlowBox extends StatelessWidget {
         border: Border.all(color: color.withOpacity(.65), width: 1.2),
       ),
       child: child,
-    );
-  }
-}
-
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Durt Online',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF123A5A)),
-        useMaterial3: true,
-      ),
-      home: const MainMenu(), // senin ana menü widget’ın
     );
   }
 }
