@@ -1,7 +1,9 @@
 name: Android APK Build (Debug)
 
 on:
-  workflow_dispatch: {}   # elle çalıştırma
+  workflow_dispatch:
+  push:
+    branches: [ main ]
 
 jobs:
   build-android:
@@ -21,43 +23,23 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Flutter version
-        run: flutter --version
-
       - name: Flutter doctor
         run: flutter doctor -v
 
       - name: Pub get
         run: flutter pub get
 
-      # Android klasörü yoksa oluştur
       - name: Ensure android project
         run: flutter create . --platforms=android
-
-      # (Opsiyonel) Gradle bellek ayarı
-      - name: Tweak Gradle memory (optional)
-        run: |
-          echo "org.gradle.jvmargs=-Xmx4096m -Dkotlin.daemon.jvm.options=-Xmx1024m" >> android/gradle.properties
-          echo "android.enableR8=true" >> android/gradle.properties
 
       - name: Clean
         run: flutter clean
 
-      - name: Build APK (debug, verbose)
-        run: |
-          set -o pipefail
-          flutter build apk --debug -v |& tee build_log.txt
+      - name: Build APK (debug)
+        run: flutter build apk --debug
 
       - name: Upload APK artifact
-        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: app-debug
           path: build/app/outputs/flutter-apk/app-debug.apk
-
-      - name: Upload build log
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: build_log
-          path: build_log.txt
