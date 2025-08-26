@@ -1,5 +1,5 @@
 name: durt_online_demo
-description: Durt Online demo project with Flutter + SVG assets
+description: Durt Online demo
 publish_to: "none"
 version: 0.1.0+1
 
@@ -14,7 +14,6 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_launcher_icons: ^0.13.1
 
 flutter:
   uses-material-design: true
