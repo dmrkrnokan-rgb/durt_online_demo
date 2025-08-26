@@ -1,13 +1,14 @@
 name: Android APK Build (Debug)
 
 on:
-  workflow_dispatch:
+  workflow_dispatch: {}        # Elle çalıştır
   push:
-    branches: [ main ]
+    branches: [ main ]         # main'e her push'ta çalıştır
 
 jobs:
   build-android:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -21,7 +22,10 @@ jobs:
       - name: Set up Flutter (stable)
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
+          channel: stable
+
+      - name: Flutter version
+        run: flutter --version
 
       - name: Flutter doctor
         run: flutter doctor -v
@@ -29,16 +33,22 @@ jobs:
       - name: Pub get
         run: flutter pub get
 
+      # Android klasörü yoksa oluşturmak sorun çıkarmaz; varsa da zarar vermez
       - name: Ensure android project
         run: flutter create . --platforms=android
 
       - name: Clean
         run: flutter clean
 
-      - name: Build APK (debug)
-        run: flutter build apk --debug
+      # >>> Hata ayıklama için ekledik
+      - name: Flutter analyze
+        run: flutter analyze
+
+      - name: Build APK (debug, verbose)
+        run: flutter build apk --debug --stacktrace --info -v
 
       - name: Upload APK artifact
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: app-debug
