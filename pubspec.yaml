@@ -9,7 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_svg: ^2.0.9
+  flutter_svg: ^2.0.9   # SVG desteği
 
 dev_dependencies:
   flutter_test:
@@ -18,24 +18,13 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-
-  assets:
-    - assets/svg/
-
-flutter_icons:
-  android: true
-  ios: false              # <<< iOS kapalı
-  image_path: "brand/app_icon_1024.png"
-
-dependencies:
-  flutter:
-    sdk: flutter
-  flutter_svg: ^2.0.9   # SVG’leri göstermek için
-
-flutter:
-  uses-material-design: true
   assets:
     - assets/cards/
     - assets/backs/
     - assets/ui/
     - assets/tables/
+
+flutter_icons:
+  android: true
+  ios: false
+  image_path: "brand/app_icon_1024.png"
