@@ -43,7 +43,7 @@ jobs:
         continue-on-error: true
 
       - name: Build APK (debug)
-        run: flutter build apk --debug -v --stacktrace
+        run: flutter build apk --debug -v -
 
       - name: Debug list (on failure)
         if: failure()
