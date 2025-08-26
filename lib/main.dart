@@ -526,3 +526,60 @@ Widget _safeSvg(String path, {BoxFit fit = BoxFit.contain}) {
     ),
   );
 }
+
+// basit parlama kutusu (avatar/isim etrafına çerçeve gibi)
+class _GlowBox extends StatelessWidget {
+  final Widget child;
+  final Color color;
+  final double radius;
+  final EdgeInsets padding;
+
+  const _GlowBox({
+    Key? key,
+    required this.child,
+    this.color = const Color(0xFF0E2A47), // lacivert
+    this.radius = 12,
+    this.padding = const EdgeInsets.all(8),
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: padding,
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(.02),
+        borderRadius: BorderRadius.circular(radius),
+        boxShadow: [
+          BoxShadow(
+            color: color.withOpacity(.35),
+            blurRadius: 14,
+            spreadRadius: 1,
+          ),
+        ],
+        border: Border.all(color: color.withOpacity(.65), width: 1.2),
+      ),
+      child: child,
+    );
+  }
+}
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Durt Online',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF123A5A)),
+        useMaterial3: true,
+      ),
+      home: const MainMenu(), // senin ana menü widget’ın
+    );
+  }
+}
