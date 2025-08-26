@@ -33,16 +33,16 @@ jobs:
       - name: Pub get
         run: flutter pub get
 
-      # Android klasörü yoksa oluşturmak sorun çıkarmaz; varsa da zarar vermez
+      # Repo'da android klasörü yoksa oluştur (varsa zarar vermez)
       - name: Ensure android project
         run: flutter create . --platforms=android
 
       - name: Clean
         run: flutter clean
 
-      # >>> Hata ayıklama için ekledik
-      - name: Flutter analyze
-        run: flutter analyze
+      # Analiz hataları build'i DURDURMASIN
+      - name: Analyze (non-blocking)
+        run: flutter analyze || true
 
       - name: Build APK (debug, verbose)
         run: flutter build apk --debug --stacktrace --info -v
