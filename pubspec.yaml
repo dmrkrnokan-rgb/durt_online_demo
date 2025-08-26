@@ -20,5 +20,5 @@ flutter:
   assets:
     - assets/cards/
     - assets/backs/
-    - assets/ui/
+    - assets/Ui/
     - assets/tables/
