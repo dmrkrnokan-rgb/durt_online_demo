@@ -9,7 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_svg: ^2.0.9   # SVG desteği
+  flutter_svg: ^2.0.9
 
 dev_dependencies:
   flutter_test:
@@ -23,8 +23,3 @@ flutter:
     - assets/backs/
     - assets/ui/
     - assets/tables/
-
-flutter_icons:
-  android: true
-  ios: false
-  image_path: "brand/app_icon_1024.png"
