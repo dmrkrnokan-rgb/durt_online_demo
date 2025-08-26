@@ -33,22 +33,19 @@ jobs:
       - name: Pub get
         run: flutter pub get
 
-      # Repo'da android klasörü yoksa oluştur (varsa zarar vermez)
       - name: Ensure android project
         run: flutter create . --platforms=android
 
       - name: Clean
         run: flutter clean
 
-      # Analiz hataları build'i DURDURMASIN
-      - name: Analyze (non-blocking)
-        run: flutter analyze || true
+      - name: Flutter analyze
+        run: flutter analyze
 
-      - name: Build APK (debug, verbose)
-        run: flutter build apk --debug --stacktrace --info -v
+      - name: Build APK (debug)
+        run: flutter build apk --debug
 
       - name: Upload APK artifact
-        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: app-debug
