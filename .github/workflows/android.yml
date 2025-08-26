@@ -34,11 +34,19 @@ jobs:
       - name: Ensure android project
         run: flutter create . --platforms=android
 
+      # (Opsiyonel) Gradle bellek ayarı
+      - name: Tweak Gradle memory (optional)
+        run: |
+          echo "org.gradle.jvmargs=-Xmx4096m -Dkotlin.daemon.jvm.options=-Xmx1024m" >> android/gradle.properties
+          echo "android.enableR8=true" >> android/gradle.properties
+
       - name: Clean
         run: flutter clean
 
       - name: Build APK (debug, verbose)
-        run: flutter build apk --debug -v
+        run: |
+          set -o pipefail
+          flutter build apk --debug -v |& tee build_log.txt
 
       - name: Upload APK artifact
         if: success()
@@ -46,3 +54,10 @@ jobs:
         with:
           name: app-debug
           path: build/app/outputs/flutter-apk/app-debug.apk
+
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build_log
+          path: build_log.txt
