@@ -1,7 +1,7 @@
 name: Android APK Build (Debug)
 
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
   push:
     branches: [ main ]
 
@@ -26,9 +26,6 @@ jobs:
       - name: Flutter version
         run: flutter --version
 
-      - name: Flutter doctor
-        run: flutter doctor -v
-
       - name: Pub get
         run: flutter pub get
 
@@ -38,24 +35,22 @@ jobs:
       - name: Clean
         run: flutter clean
 
-      - name: Flutter analyze
-        run: flutter analyze
-        continue-on-error: true
-
+      # 1) Standart Flutter build
       - name: Build APK (debug)
-        run: flutter build apk --debug -v -
+        run: flutter build apk --debug -v
 
-      - name: Debug list (on failure)
+      # 2) Flutter build FAIL olursa, Gradle ile ayrıntılı stacktrace dene
+      - name: Gradle fallback (stacktrace)
         if: failure()
         run: |
-          ls -la
-          ls -la assets
-          ls -la assets/ui
-          ls -la build/app/outputs/flutter-apk || true
+          cd android
+          ./gradlew assembleDebug --stacktrace --warning-mode all
 
+      # 3) APK neredeyse oradan yükle (her iki yol da ekli)
       - name: Upload APK artifact
-        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: app-debug
-          path: build/app/outputs/flutter-apk/app-debug.apk
+          path: |
+            build/app/outputs/flutter-apk/app-debug.apk
+            android/app/build/outputs/apk/debug/app-debug.apk
